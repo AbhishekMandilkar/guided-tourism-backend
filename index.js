@@ -13,7 +13,7 @@ app.post("/getMetrics", (req, res) => {
   let { org, dst } = req.body;
   var origins = [`${org.latitude},${org.longitude}`];
   var destinations = [`${dst.latitude},${dst.longitude}`];
-  console.log(origins, destinations);
+
   distance.matrix(origins, destinations, function (err, distances) {
     if (!err) {
       let distance = distances.rows[0].elements[0].distance.text;
