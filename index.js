@@ -5,8 +5,11 @@ var distance = require("google-distance-matrix");
 distance.key(process.env.GOOGLE_API_KEY);
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("Hello from server");
+});
+
 app.post("/getMetrics", (req, res) => {
-  console.log(req.body);
   let { org, dst } = req.body;
   var origins = [`${org.latitude},${org.longitude}`];
   var destinations = [`${dst.latitude},${dst.longitude}`];
