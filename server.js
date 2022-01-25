@@ -24,7 +24,10 @@ app.post("/get-metrics", (req, res) => {
     }
   });
 });
-
+app.get("/get-hotels", (req, res) => {
+  // console.log(req.body);
+  res.send("API Hit");
+});
 app.post("/get-hotels", (req, res) => {
   // console.log(req.body);
   res.send("API Hit");
