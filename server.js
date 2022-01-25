@@ -7,10 +7,10 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Hello from server");
 });
-app.get("/getMetrics", (req, res) => {
+app.get("/get-metrics", (req, res) => {
   res.send("Hi");
 });
-app.post("/getMetrics", (req, res) => {
+app.post("/get-metrics", (req, res) => {
   let { org, dst } = req.body;
   var origins = [`${org.latitude},${org.longitude}`];
   var destinations = [`${dst.latitude},${dst.longitude}`];
@@ -25,8 +25,8 @@ app.post("/getMetrics", (req, res) => {
   });
 });
 
-app.post("/getHotels", (req, res) => {
-  console.log(req.body);
+app.post("/get-hotels", (req, res) => {
+  // console.log(req.body);
   res.send("API Hit");
 });
 
