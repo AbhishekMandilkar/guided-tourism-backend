@@ -17,8 +17,8 @@ app.post("/getMetrics", (req, res) => {
 
   distance.matrix(origins, destinations, function (err, distances) {
     if (!err) {
-      let distance = distances.rows[0].elements[0].distance.text;
-      let time = distances.rows[0].elements[0].duration.text;
+      let distance = distances?.rows[0]?.elements[0]?.distance.text;
+      let time = distances?.rows[0]?.elements[0]?.duration.text;
       res.send({ distance, time });
       // console.log(distance, time);
     }
