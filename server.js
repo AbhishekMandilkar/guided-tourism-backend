@@ -36,8 +36,9 @@ app.get("/get-hotels", (req, res) => {
   res.send("API Hit");
 });
 app.post("/get-hotels", async (req, res) => {
-  let { days, budget } = req.body;
-
+  let { uid } = req.body;
+  const trip = await db.collection("trips").doc(uid).get();
+  const { days, budget } = trip.data();
   const hotels = await db.collection("hotels").get();
   let data = [];
   for (const hotel of hotels.docs) {
