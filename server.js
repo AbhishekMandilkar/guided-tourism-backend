@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 var distance = require("google-distance-matrix");
 const fs = require("firebase-admin");
-
+require("dotenv").config();
 const serviceAccount = require("./tour-guide-9de5c-firebase-adminsdk-awiyw-b02307e3ad.json");
 
 fs.initializeApp({
@@ -11,6 +11,7 @@ fs.initializeApp({
 const db = fs.firestore();
 distance.key(process.env.GOOGLE_API_KEY);
 app.use(express.json());
+
 app.get("/", (req, res) => {
   res.send("Hello from server");
 });
@@ -19,15 +20,15 @@ app.get("/get-metrics", (req, res) => {
 });
 app.post("/get-metrics", (req, res) => {
   let { org, dst } = req.body;
-  var origins = [`${org.latitude},${org.longitude}`];
-  var destinations = [`${dst.latitude},${dst.longitude}`];
+  var origins = [`${org?.latitude},${org?.longitude}`];
+  var destinations = [`${dst?.latitude},${dst?.longitude}`];
 
   distance.matrix(origins, destinations, function (err, distances) {
     if (!err) {
       let distance = distances?.rows[0]?.elements[0]?.distance.text;
       let time = distances?.rows[0]?.elements[0]?.duration.text;
-      res.send({ distance, time });
-      // console.log(distance, time);
+      // console.log(distances);
+      res.json({ distance, time });
     }
   });
 });
