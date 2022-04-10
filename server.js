@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const Stripe = require("stripe");
@@ -5,7 +6,6 @@ const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const cors = require("cors");
 var distance = require("google-distance-matrix");
 const fs = require("firebase-admin");
-require("dotenv").config();
 const serviceAccount = require("./tour-guide-9de5c-firebase-adminsdk-awiyw-b02307e3ad.json");
 
 fs.initializeApp({
