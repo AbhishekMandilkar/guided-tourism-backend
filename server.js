@@ -81,7 +81,9 @@ app.post("/stripe", async (req, res) => {
   }
   // Event when a payment is succeeded
   if (event.type === "payment_intent.succeeded") {
-    console.log(`${event.data.object.metadata.name} succeeded payment!`);
+    console.log(
+      `${event.data.object.metadata.name} ${event.data.object.metadata.authUserId} ${event.data.object.metadata.date}`
+    );
     // fulfilment
   }
   res.json({ ok: true });
@@ -99,7 +101,7 @@ app.post("/payment", async (req, res) => {
       amount: amount,
       currency: "INR",
       payment_method_types: ["card"],
-      metadata: { name },
+      metadata: { name, authUserId, date },
     });
     // Extracting the client secret
     const clientSecret = paymentIntent.client_secret;
