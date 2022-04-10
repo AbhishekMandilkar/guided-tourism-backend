@@ -7,7 +7,13 @@ const cors = require("cors");
 var distance = require("google-distance-matrix");
 const fs = require("firebase-admin");
 const serviceAccount = require("./tour-guide-9de5c-firebase-adminsdk-awiyw-b02307e3ad.json");
-
+app.use((req, res, next) => {
+  if (req.originalUrl === "/stripe") {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
 fs.initializeApp({
   credential: fs.credential.cert(serviceAccount),
 });
@@ -57,37 +63,7 @@ app.post("/get-hotels", async (req, res) => {
   });
   res.json(hotelsData);
 });
-app.use("/stripe", express.raw({ type: "*/*" }));
-app.post("/stripe", async (req, res) => {
-  // Get the signature from the headers
-  const sig = req.headers["stripe-signature"];
-  let event;
-  try {
-    // Check if the event is sent from Stripe or a third party
-    // And parse the event
-    event = await stripe.webhooks.constructEvent(
-      req.body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
-  } catch (err) {
-    // Handle what happens if the event is not from Stripe
-    console.log(err);
-    return res.status(400).json({ message: err.message });
-  }
-  // Event when a payment is initiated
-  if (event.type === "payment_intent.created") {
-    console.log(`${event.data.object.metadata.name} initated payment!`);
-  }
-  // Event when a payment is succeeded
-  if (event.type === "payment_intent.succeeded") {
-    console.log(
-      `${event.data.object.metadata.name} ${event.data.object.metadata.authUserId} ${event.data.object.metadata.date}`
-    );
-    // fulfilment
-  }
-  res.json({ ok: true });
-});
+
 app.post("/payment", async (req, res) => {
   try {
     // Getting data from client
@@ -117,4 +93,35 @@ app.post("/payment", async (req, res) => {
 const server = app.listen(process.env.PORT || 3000, () => {
   const port = server.address().port;
   console.log(`Express is working on port ${port}`);
+});
+
+//WEB HOOKS
+app.use("/stripe", express.raw({ type: "*/*" }));
+app.post("/stripe", async (req, res) => {
+  // Get the signature from the headers
+  const sig = req.headers["stripe-signature"];
+  let event;
+  try {
+    // Check if the event is sent from Stripe or a third party
+    // And parse the event
+    event = await stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    // Handle what happens if the event is not from Stripe
+    console.log(err);
+    return res.status(400).json({ message: err.message });
+  }
+  // Event when a payment is initiated
+  if (event.type === "payment_intent.created") {
+    console.log(`${event.data.object.metadata.name} initated payment!`);
+  }
+  // Event when a payment is succeeded
+  if (event.type === "payment_intent.succeeded") {
+    console.log(`${event.data.object.metadata.name} succeeded payment!`);
+    // fulfilment
+  }
+  res.json({ ok: true });
 });
