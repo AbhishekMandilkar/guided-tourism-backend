@@ -91,7 +91,7 @@ app.post("/stripe", async (req, res) => {
 app.post("/payment", async (req, res) => {
   try {
     // Getting data from client
-    let { amount, name } = req.body;
+    let { amount, name, authUserId, date } = req.body;
     // Simple validation
     if (!amount || !name)
       return res.status(400).json({ message: "All fields are required" });
