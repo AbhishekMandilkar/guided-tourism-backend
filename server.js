@@ -7,19 +7,14 @@ const cors = require("cors");
 var distance = require("google-distance-matrix");
 const fs = require("firebase-admin");
 const serviceAccount = require("./tour-guide-9de5c-firebase-adminsdk-awiyw-b02307e3ad.json");
-app.use((req, res, next) => {
-  if (req.originalUrl === "/stripe") {
-    next();
-  } else {
-    express.json()(req, res, next);
-  }
-});
+
 fs.initializeApp({
   credential: fs.credential.cert(serviceAccount),
 });
 const db = fs.firestore();
 distance.key(process.env.GOOGLE_API_KEY);
 app.use(express.json());
+app.use(require("body-parser").raw({ type: "*/*" }));
 app.use(cors());
 app.get("/", (req, res) => {
   res.send("Hello from server");
@@ -96,7 +91,6 @@ const server = app.listen(process.env.PORT || 3000, () => {
 });
 
 //WEB HOOKS
-app.use("/stripe", express.raw({ type: "*/*" }));
 app.post("/stripe", async (req, res) => {
   // Get the signature from the headers
   const sig = req.headers["stripe-signature"];
