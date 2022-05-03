@@ -14,7 +14,13 @@ fs.initializeApp({
 });
 const db = fs.firestore();
 distance.key(process.env.GOOGLE_API_KEY);
-app.use(express.json());
+app.use((req, res, next) => {
+  if (req.originalUrl === "/stripe") {
+    next();
+  } else {
+    bodyParser.json()(req, res, next);
+  }
+});
 app.use(cors());
 app.get("/", (req, res) => {
   res.send("Hello from server");
