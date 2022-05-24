@@ -127,6 +127,6 @@ app.post("/stripe", async (req, res) => {
     console.log(
       `${event.data.object.metadata.name} succeeded payment! with id ${event.data.object.metadata.authUserId}`
     );
-    // fulfilment}
+    // fulfilment
   }
 });
