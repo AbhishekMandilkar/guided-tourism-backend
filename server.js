@@ -101,35 +101,32 @@ const server = app.listen(process.env.PORT || 3000, () => {
 });
 
 //WEB HOOKS
-app.post(
-  "/stripe",
-  bodyParser.raw({ type: "application/json" }),
-  async (req, res) => {
-    // Get the signature from the headers
-    const sig = req.headers["stripe-signature"];
-    let event;
-    try {
-      // Check if the event is sent from Stripe or a third party
-      // And parse the event
-      event = await stripe.webhooks.constructEvent(
-        req.body,
-        sig,
-        process.env.STRIPE_WEBHOOK_SECRET
-      );
-    } catch (err) {
-      // Handle what happens if the event is not from Stripe
-      console.log(err);
-      return res.status(400).json({ message: err.message });
-    }
-    // Event when a payment is initiated
-    if (event.type === "payment_intent.created") {
-      console.log(`${event.data.object.metadata.name} initated payment!`);
-    }
-    // Event when a payment is succeeded
-    if (event.type === "payment_intent.succeeded") {
-      console.log(`${event.data.object.metadata.name} succeeded payment!`);
-      // fulfilment
-    }
-    res.json({ ok: true });
+app.post("/stripe", async (req, res) => {
+  // Get the signature from the headers
+  const sig = req.headers["stripe-signature"];
+  let event;
+  try {
+    // Check if the event is sent from Stripe or a third party
+    // And parse the event
+    event = await stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    // Handle what happens if the event is not from Stripe
+    console.log(err);
+    return res.status(400).json({ message: err.message });
+  }
+  // Event when a payment is initiated
+  if (event.type === "payment_intent.created") {
+    console.log(`${event.data.object.metadata.name} initated payment!`);
+  }
+  // Event when a payment is succeeded
+  if (event.type === "payment_intent.succeeded") {
+    console.log(
+      `${event.data.object.metadata.name} succeeded payment! with id ${event.data.object.metadata.authUserId}`
+    );
+    // fulfilment
   }
 );
